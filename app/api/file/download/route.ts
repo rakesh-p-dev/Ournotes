@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { s3client } from "@/utils/utils";
-
+import { getServerSession } from "next-auth/next"
+import { authentication } from '@/utils/auth';
 
 export async function POST(request: NextRequest) {
     try {
+        const session=await getServerSession(authentication);
+        if(!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         const body = await request.json();
         const filekey = body.fileurl;
         const url = s3client.getSignedUrl('getObject', {

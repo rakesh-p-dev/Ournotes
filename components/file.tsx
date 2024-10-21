@@ -49,18 +49,16 @@ const File: React.FC<FileProps> = ({ filename, filekey,fileuserid,fileid,subject
           fileId:fileid,
           subjectId:subjectid
         })});
-        console.log(  filekey,
-          fileid,
-          subjectid)
+       
         if (!response.ok) throw new Error('Network response was not ok');
         const data =await response.json();
-        console.log(data)
+        
         const {deleteurl}=data;
        
         await fetch(deleteurl,{method:"DELETE"})
         alert('File deleted successfully');
       } catch (error) {
-        console.error('Delete failed:', error);
+      
         alert('Failed to delete the file');
       } finally {
         window.location.reload();

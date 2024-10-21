@@ -15,7 +15,7 @@ async function main(){
           data: dept,
         });
       }
-      console.log("Data seeded");
+
 }
 main()
   .catch((e) => {

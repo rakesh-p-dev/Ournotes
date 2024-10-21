@@ -3,7 +3,8 @@ import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PrismaClient } from "@prisma/client";
 import {redis} from "@/lib/redis";  
-
+import { getServerSession } from "next-auth/next"
+import { authentication } from '@/utils/auth';
 const s3client = new S3Client({
     region: process.env.AWS_S3_REGION || '',
     credentials: {
@@ -14,8 +15,12 @@ const s3client = new S3Client({
 
 export async function DELETE(request: NextRequest) {
     try {
+const session=await getServerSession(authentication);
+if(!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+}
         const body = await request.json();
-        console.log(body);
+       
         const fileid = body.fileId;
         const filekey = body.fileKey;
         const subjectid=body.subjectId;
@@ -49,7 +54,7 @@ export async function DELETE(request: NextRequest) {
             throw new Error('Failed to delete record from database');
         }
     } catch (e) {
-        console.error(e);
+        
         return NextResponse.json({
             error:  'An error occurred',
             e:{e},

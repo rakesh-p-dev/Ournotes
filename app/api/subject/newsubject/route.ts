@@ -3,6 +3,8 @@ import {  PrismaClient } from "@prisma/client";
 import { s3client } from "@/utils/utils";
 import {redis} from '@/lib/redis';
 import { randomUUID } from 'crypto';
+import { getServerSession } from "next-auth/next"
+import { authentication } from '@/utils/auth';
 const prisma= new PrismaClient()
 
 
@@ -10,7 +12,11 @@ const prisma= new PrismaClient()
 
 
 export async function POST(request: NextRequest) {
+  const session = await getServerSession(authentication)
   try {
+    if(!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const cookies = request.cookies;
     const userid = cookies.get('userId')?.value;
     const formData = await request.formData();

@@ -3,17 +3,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { PrismaClient } from "@prisma/client";
 import {redis} from '@/lib/redis';
-
+import { getServerSession } from "next-auth/next"
+import { authentication } from '@/utils/auth';
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
     try {
-        
+        const session=await getServerSession(authentication);
+        if(!session) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
         const formData = await req.formData();
         const file = formData.get("file");
         const userid = Number(formData.get("userid"));
         const subjectid = Number(formData.get("subjectid"));
-       console.log(subjectid);
+      
        
 
        

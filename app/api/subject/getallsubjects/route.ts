@@ -1,8 +1,13 @@
 import {redis} from '@/lib/redis';
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
+import { getServerSession } from "next-auth/next"
+import { authentication } from '@/utils/auth';
 export async function GET() {
+  const session=await getServerSession(authentication);
+  if(!session){
+    return NextResponse.json({error:"Unauthorized"},{status:401});
+  }
   const prisma = new PrismaClient();
   const cacheKey='allsubjects';
   const cachedSubjects=await redis.get(cacheKey);

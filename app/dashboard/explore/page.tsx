@@ -40,7 +40,7 @@ export default function Allsubjects(){
   ALL SUBJECTS
 </div>
 
-<div className="w-full max-w-4xl h-[80vh] overflow-auto">
+<div className="w-full max-w-4xl h-[80vh] overflow-auto ">
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
    
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
@@ -78,7 +78,7 @@ export default function Allsubjects(){
           </div>
         ))}
       </div>
-      <Toaster position="top-center"richColors />
+      <Toaster position="bottom-center"richColors />
     </main>
     
     </div>

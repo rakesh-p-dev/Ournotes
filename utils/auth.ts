@@ -18,7 +18,7 @@ export const authentication={
     ],secret:process.env.NEXTAUTH_SECRET||'',
     callbacks:{
         jwt: async ({ user, token }: any) => {
-          console.log(token);
+          
             if (user) {
                 token.uid = user.id;
             }
