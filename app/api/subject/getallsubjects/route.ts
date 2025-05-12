@@ -9,12 +9,12 @@ export async function GET() {
     return NextResponse.json({error:"Unauthorized"},{status:401});
   }
   const prisma = new PrismaClient();
-  const cacheKey='allsubjects';
-  const cachedSubjects=await redis.get(cacheKey);
-  if(cachedSubjects){
+  // const cacheKey='allsubjects';
+  // const cachedSubjects=await redis.get(cacheKey);
+  // if(cachedSubjects){
    
-    return NextResponse.json({subject:JSON.parse(cachedSubjects)});
-  }
+  //   return NextResponse.json({subject:JSON.parse(cachedSubjects)});
+  // }
   const subject = await prisma.subject.findMany(
     {
         include:{
@@ -23,9 +23,9 @@ export async function GET() {
           }
     }
   );
-  await redis.set(cacheKey,JSON.stringify(subject)
-  );
-
+  // await redis.set(cacheKey,JSON.stringify(subject)
+  
+console.log(subject);
   
   return NextResponse.json({subject});
 }  
