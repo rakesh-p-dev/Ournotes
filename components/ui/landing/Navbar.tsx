@@ -45,12 +45,11 @@ const Navbar = () => {
           {/* Desktop Call-to-actions */}
           <div className="hidden md:flex items-center gap-3 relative z-10 font-jakarta">
             <Link href="/auth">
-              <Button
-                variant="ghost"
+              <button
                 className="text-sm font-medium rounded-md px-4 bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800 cursor-pointer"
               >
                 Sign In
-              </Button>
+              </button>
             </Link>
             <Link
               href="https://github.com/rakesh-paulraj1/OurNotes"
@@ -73,12 +72,12 @@ const Navbar = () => {
               <X className="h-5 w-5" />
             ) : (
              <Link href="/auth">
-              <Button
-                variant="ghost"
+              <span
+                
                 className="text-sm font-medium rounded-md px-4 bg-zinc-900/40 hover:bg-zinc-900/60 text-gray-300 hover:text-white backdrop-blur-xl border border-zinc-800 cursor-pointer"
               >
                 Sign In
-              </Button>
+              </span>
             </Link>
             )}
           </Button>

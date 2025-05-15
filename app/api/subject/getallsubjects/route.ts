@@ -11,6 +11,7 @@ export async function GET() {
   const prisma = new PrismaClient();
   // const cacheKey='allsubjects';
   // const cachedSubjects=await redis.get(cacheKey);
+  // console.log("Cached subjects"+cachedSubjects);
   // if(cachedSubjects){
    
   //   return NextResponse.json({subject:JSON.parse(cachedSubjects)});
@@ -23,8 +24,8 @@ export async function GET() {
           }
     }
   );
-  // await redis.set(cacheKey,JSON.stringify(subject)
-  
+//   await redis.set(cacheKey,JSON.stringify(subject)
+// );
 console.log(subject);
   
   return NextResponse.json({subject});

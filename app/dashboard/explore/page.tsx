@@ -35,7 +35,7 @@ export default function Allsubjects(){
 
 
   return (
-    <div>
+    <div className='w-full'>
     <div className="text-lg font-bold">
   ALL SUBJECTS
 </div>
