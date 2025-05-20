@@ -9,11 +9,11 @@ export async function GET() {
     return NextResponse.json({error:"Unauthorized"},{status:401});
   }
   const prisma = new PrismaClient();
-  // const cacheKey='allsubjects';
+  const cacheKey='allsubjects';
   // const cachedSubjects=await redis.get(cacheKey);
   // console.log("Cached subjects"+cachedSubjects);
   // if(cachedSubjects){
-   
+  //  console.log("Cached subjects"+cachedSubjects);
   //   return NextResponse.json({subject:JSON.parse(cachedSubjects)});
   // }
   const subject = await prisma.subject.findMany(
@@ -24,7 +24,7 @@ export async function GET() {
           }
     }
   );
-//   await redis.set(cacheKey,JSON.stringify(subject)
+//   // await redis.set(cacheKey,JSON.stringify(subject)
 // );
 console.log(subject);
   

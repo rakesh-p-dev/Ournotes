@@ -48,7 +48,7 @@ if(!session) {
 
         if (subject) {
             const cacheKey = 'allsubjects';
-    await redis.del(cacheKey);
+    // await redis.del(cacheKey);
             return NextResponse.json({ data: subject });
         } else {
             throw new Error('Failed to delete record from database');

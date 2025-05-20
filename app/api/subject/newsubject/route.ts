@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
         },
       });
     }
-    const cacheKey = 'allsubjects';
-    await redis.del(cacheKey);
-    await redis.del(`allsubjects:${userid}`);
+    // const cacheKey = 'allsubjects';
+    // await redis.del(cacheKey);
+    // await redis.del(`allsubjects:${userid}`);
 
      
     return NextResponse.json({ uploadUrl, key });

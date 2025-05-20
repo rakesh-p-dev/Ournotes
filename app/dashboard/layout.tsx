@@ -1,30 +1,27 @@
-interface LayoutProps {
-  Logo?: React.FC;
-}
 "use client"
 import React from 'react';
-import {  signOut, useSession } from 'next-auth/react';
-import { Sidebar,SidebarBody,SidebarLink } from '@/components/Sibebar';
-
+import { Session } from 'next-auth';
+import { signOut, useSession } from 'next-auth/react';
+import { Sidebar, SidebarBody, SidebarLink } from '@/components/Sibebar';
 import { useState } from 'react';
-import {IconSearch,
-  IconFile,
-  IconFilePencil,
-  IconArrowLeft,
- IconFileTextAi,
-  IconUser
-
-} from "@tabler/icons-react";
+import { IconSearch, IconFile, IconFilePencil, IconArrowLeft, IconFileTextAi, IconUser } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import Image from 'next/image';
 import Link from 'next/link';
-import {cn} from '../../utils/cn';
+import { cn } from '../../utils/cn';
+
+interface LayoutProps {
+  Logo?: React.FC;
+  children: React.ReactNode;
+}
+
+interface ChildProps {
+  session?: Session | null;
+}
 
 export default function Layout({
   children,
-}: {
-  children: React.ReactNode;
-}): JSX.Element {
+}: LayoutProps): JSX.Element {
 
   const handleSignOut = async () => {
     await signOut();
@@ -71,6 +68,12 @@ export default function Layout({
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(false);
     
+  const childrenWithProps = React.Children.map(children, child => {
+    if (React.isValidElement<ChildProps>(child)) {
+      return React.cloneElement(child, { session });
+    }
+    return child;
+  });
 
   return (
    
@@ -146,7 +149,7 @@ export default function Layout({
         open ? 'ml-[300px]' : 'ml-0'
       }`}
     >
-      {children}
+      {childrenWithProps}
     </main>
         
       </div>

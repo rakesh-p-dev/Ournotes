@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
                 }
             });
             const cacheKey = 'allsubjects';
-    await redis.del(cacheKey);
+    // await redis.del(cacheKey);
 
             return NextResponse.json({
                 uploadUrl,
