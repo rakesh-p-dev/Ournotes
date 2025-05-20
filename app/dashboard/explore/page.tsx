@@ -9,18 +9,27 @@ import { Session } from 'next-auth';
 import { useEffect, useState } from "react";
 import { Toaster, toast } from 'sonner';
 
-interface ExplorePageProps {
-  session?: Session | null;
+type Props = {
+  params: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default function Allsubjects({ session }: ExplorePageProps) {
+export default function Allsubjects({ params, searchParams }: Props) {
   const [subjects, setSubjects] = useState<any[]>([]);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    if (session) {
-      toast.success('Logged in successfully');
-    }
-  }, [session]);
+    // Get session data
+    const getSession = async () => {
+      const response = await fetch('/api/auth/session');
+      const data = await response.json();
+      setSession(data);
+      if (data) {
+        toast.success('Logged in successfully');
+      }
+    };
+    getSession();
+  }, []);
 
   const getallsubjects = async () => {
     const response = await fetch("/api/subject/getallsubjects", { method: "GET" });
