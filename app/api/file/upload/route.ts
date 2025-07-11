@@ -2,7 +2,7 @@ import { s3client } from "@/utils/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { PrismaClient } from "@prisma/client";
-import {redis} from '@/lib/redis';
+import { getRedisClient } from '@/lib/noderedis';
 import { getServerSession } from "next-auth/next"
 import { authentication } from '@/utils/auth';
 const prisma = new PrismaClient();
@@ -44,9 +44,11 @@ export async function POST(req: NextRequest) {
                     subjectId: subjectid,
                 }
             });
+           
+            const redis = await getRedisClient();
             const cacheKey = 'allsubjects';
-    // await redis.del(cacheKey);
-
+            await redis.del(cacheKey);
+    
             return NextResponse.json({
                 uploadUrl,
                 Key: key
