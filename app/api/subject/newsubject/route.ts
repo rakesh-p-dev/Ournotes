@@ -1,20 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import {  PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { s3client } from "@/utils/utils";
-import {redis} from '@/lib/redis';
+import { getRedisClient } from '@/lib/noderedis';
 import { randomUUID } from 'crypto';
-import { getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth/next";
 import { authentication } from '@/utils/auth';
-const prisma= new PrismaClient()
-
-
-
-
+const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession(authentication)
+  const session = await getServerSession(authentication);
   try {
-    if(!session) {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const cookies = request.cookies;
@@ -23,19 +19,18 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file");
     const subjectname = formData.get("subjectname");
     const departmentId = formData.get("department");
-    
-    if (!file) {  
+
+    if (!file) {
       return NextResponse.json({ error: "File is required." }, { status: 400 });
     }
 
-  
     if (!(file instanceof File)) {
-      return NextResponse.json( 
+      return NextResponse.json(
         { error: "Invalid file format." },
         { status: 400 }
       );
     }
-   
+
     const subject = await prisma.subject.create({
       data: {
         name: subjectname?.toString() ?? "",
@@ -48,8 +43,7 @@ export async function POST(request: NextRequest) {
     let key;
 
     if (file && file instanceof File) {
-      const fileType = file.type; 
-      
+      const fileType = file.type;
       const ex = (fileType as string).split("/")[1];
       key = `${randomUUID()}.${ex}`;
       const params = {
@@ -58,9 +52,7 @@ export async function POST(request: NextRequest) {
         Expires: 60,
         ContentType: `pdf`
       };
-     
       uploadUrl = await s3client.getSignedUrl("putObject", params);
-
       await prisma.file.create({
         data: {
           filename: file.name,
@@ -70,11 +62,11 @@ export async function POST(request: NextRequest) {
         },
       });
     }
-    // const cacheKey = 'allsubjects';
-    // await redis.del(cacheKey);
-    // await redis.del(`allsubjects:${userid}`);
 
-     
+    const redis = await getRedisClient();
+    await redis.del('allsubjects');
+    await redis.del(`allsubjects:${userid}`);
+
     return NextResponse.json({ uploadUrl, key });
   } catch (error) {
     console.log(error);
