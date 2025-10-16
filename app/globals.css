@@ -2,3 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* Proper dark theme with true darkness */
+  .dark {
+    color-scheme: dark;
+  }
+  
+  .dark body {
+    background-color: #000000; /* True black */
+  }
+
+  .dark h1,
+  .dark h2, 
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6 {
+    color: #f3f4f6; /* Light gray text for headings */
+  }
+
+  .dark p {
+    color: #d1d5db; /* Lighter gray for paragraphs */
+  }
+
+  /* Dark theme for cards and containers */
+  .dark .bg-white {
+    background-color: #111111 !important; /* Very dark gray instead of white */
+  }
+
+  .dark .bg-gray-50 {
+    background-color: #0a0a0a !important; /* Almost black */
+  }
+
+  .dark .bg-gray-100 {
+    background-color: #1a1a1a !important; /* Dark gray */
+  }
+
+  .dark .text-gray-900 {
+    color: #f3f4f6 !important; /* Light text */
+  }
+
+  .dark .border-gray-200 {
+    border-color: #374151 !important; /* Dark borders */
+  }
+
+  /* Theme-aware noise texture */
+  .dark [style*="--bg-color"] {
+    --bg-color: #000000 !important;
+    --dot-color: rgba(255, 255, 255, 0.15) !important;
+  }
+}
+
+:root [style*="--bg-color"] {
+  --bg-color: #ffffff;
+  --dot-color: rgba(0, 0, 0, 0.35);
+}
+
