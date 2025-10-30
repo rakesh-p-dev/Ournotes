@@ -58,3 +58,20 @@
   --dot-color: rgba(0, 0, 0, 0.35);
 }
 
+/* Continuous slide-right animation for small indicators (respects prefers-reduced-motion) */
+@keyframes slide-right {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+  100% { transform: translateX(0); }
+}
+
+.anim-slide-right {
+  animation: slide-right 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-slide-right {
+    animation: none;
+  }
+}
+

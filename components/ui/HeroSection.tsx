@@ -94,6 +94,7 @@ export default function HeroSection() {
 
   return (
     <div className="w-full">
+      
       <div className="container mx-auto">
         <div className="relative flex flex-col items-center justify-center gap-8 py-0 lg:py-10">
           <Science className="absolute top-4 left-4 size-24 md:size-64" />

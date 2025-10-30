@@ -2,6 +2,7 @@ import Features from "@/components/ui/Features";
 import About from "@/components/ui/About";
 import { Metadata } from "next";
 import HeroSection from "@/components/ui/HeroSection";
+
 export const metadata: Metadata = {
   title: "Ournotes - Study Smarter with AI-Powered Learning",
   description:
@@ -53,21 +54,24 @@ export const metadata: Metadata = {
   },
 };
 
-// Force static generation
-export const dynamic = "force-static";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  
   return (
+   
+ 
 
-
-      <div className="font-satoshi container mx-auto min-h-screen max-w-6xl bg-white dark:bg-black text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="font-satoshi container mx-auto min-h-screen max-w-6xl bg-white dark:bg-black text-gray-900 dark:text-gray-100 transition-colors duration-300">
+   
       <div className="mx-4">
+        
         <HeroSection />
         <About />
         <Features />
       </div>
     </div>
-
    
   );
 }

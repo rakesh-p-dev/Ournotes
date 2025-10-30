@@ -16,16 +16,11 @@ import { Link } from "next-view-transitions";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ThemeToggle } from "./theme-toogle";
 import LogOutButton from "./Logoutbutton";
-// import { SignInButton } from "../auth/SignInButton";
-import { SignInButton } from "./Signinbutton";
 import { UserIcon } from "./icons/UserIcon";
 import { NotesbookIcon } from "./icons/NotebookIcon";
 import { SignOutIcon } from "./icons/SignOutIcon";
 import QuestionMarkIcon from "./icons/QuestionMarkIcon";
-import CardsIcon from "./icons/CardsIcon";
 import AiIcon from "./icons/AiIcon";
-import Image from "next/image";
-import WhatsappDuoIcon from "./icons/WhatsappDuoIcon";
 
 export default function Profile() {
   const { data: session } = useSession();
