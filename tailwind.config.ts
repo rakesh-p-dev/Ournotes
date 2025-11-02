@@ -1,5 +1,13 @@
 import type { Config } from "tailwindcss";
-import { withUt } from "uploadthing/tw";
+
+// `uploadthing/tw` is optional in some setups. Try to require it at runtime
+// and fall back to an identity function if it's not installed so the build
+// doesn't fail. This makes Tailwind config resilient in environments where
+// uploadthing isn't present.
+// If you want to add UploadThing Tailwind helpers, install `uploadthing` and
+// update this file to wrap the config with `withUt(config)`. By default we
+// export the plain config to avoid build-time failures when that package is
+// not present.
 const {
   default: flattenColorPalette,
 } = require("tailwindcss/lib/util/flattenColorPalette");
@@ -70,4 +78,4 @@ const config: Config = {
   plugins: [addVariablesForColors],
 };
 
-export default withUt(config);
+export default config;

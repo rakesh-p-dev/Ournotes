@@ -7,6 +7,9 @@ const nextConfig = { images: {
        
       },
     ],
-  }};
+  },
+experimental: {
+    serverComponentsExternalPackages: ["pdf-parse","@langchain/core/tools"],
+  },};
 
 export default nextConfig;

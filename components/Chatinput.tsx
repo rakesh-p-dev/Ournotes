@@ -3,22 +3,35 @@
 import { Globe, Paperclip, Send } from "lucide-react";
 import { useState } from "react";
 import { useAutoResizeTextarea } from "@/utils/textarea-hook";
-import { motion, AnimatePresence } from "motion/react";
 import {cn} from '../utils/cn';
 import { Textarea } from "./Textarea";
 
-export default function AI_Input_Search() {
-    const [value, setValue] = useState("");
+type ChatInputProps = {
+  value?: string;
+  onChange?: (v: string) => void;
+  onSubmit?: () => void;
+};
+
+export default function AI_Input_Search({ value: controlledValue, onChange, onSubmit }: ChatInputProps) {
+    const [internalValue, setInternalValue] = useState("");
     const { textareaRef, adjustHeight } = useAutoResizeTextarea({
         minHeight: 52,
         maxHeight: 200,
     });
-    const [showSearch, setShowSearch] = useState(true);
+
     const [isFocused, setIsFocused] = useState(false);
 
+    const isControlled = typeof controlledValue !== "undefined";
+
+    const value = isControlled ? controlledValue! : internalValue;
+
     const handleSubmit = () => {
-        setValue("");
-        adjustHeight(true); 
+        if (onSubmit) {
+            onSubmit();
+        } else {
+            setInternalValue("");
+            adjustHeight(true);
+        }
     };
 
     const handleFocus = () => {
@@ -57,7 +70,7 @@ export default function AI_Input_Search() {
                         <Textarea
                             id="ai-input-04"
                             value={value}
-                            placeholder="Search the web..."
+                            placeholder="Ask a question about your PDF..."
                             className="w-full rounded-xl rounded-b-none px-4 py-3 bg-black/5 dark:bg-white/5 border-none dark:text-white placeholder:text-black/70 dark:placeholder:text-white/70 resize-none focus-visible:ring-0 leading-[1.2]"
                             ref={textareaRef}
                             onFocus={handleFocus}
@@ -69,7 +82,11 @@ export default function AI_Input_Search() {
                                 }
                             }}
                             onChange={(e) => {
-                                setValue(e.target.value);
+                                if (isControlled) {
+                                    onChange?.(e.target.value);
+                                } else {
+                                    setInternalValue(e.target.value);
+                                }
                                 adjustHeight();
                             }}
                         />
