@@ -34,7 +34,7 @@ export const FileUpload = ({
   onProgress,
 }: {
   onChange?: (files: File[]) => void;
-  onExtract?: (docId: string, docs: any[], file: File) => void;
+  onExtract?: (docId: string, docs: any[], file: File, summary: string) => void;
   onUploadStart?: (file: File) => void;
   onUpsertStart?: (docId: string) => void;
   onUpsertComplete?: (docId: string, result: any) => void;
@@ -75,11 +75,10 @@ export const FileUpload = ({
 
         const docId = response.docId ?? `${file.name}-${Date.now()}`;
         const docs = response.docs ?? [];
+        const summary = response.summary ?? "Summary not available.";
 
-        // Notify parent about extracted docs immediately
-        onExtract && onExtract(docId, docs, file);
+        onExtract && onExtract(docId, docs, file, summary);
 
-  // Start embedding & upload phase
   setProgressMessage("Embedding & uploading...");
   onProgress && onProgress("Embedding & uploading...");
         onUpsertStart && onUpsertStart(docId);

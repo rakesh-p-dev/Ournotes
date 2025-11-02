@@ -3,6 +3,7 @@ export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import { parsePdfBufferToDocs } from "../../../../langchain/pdfloader";
+import { summarizeChunks } from "../../../../langchain/agent";
 export async function POST(request: Request) {
   try {
     const contentType = request.headers.get("content-type") ?? "";
@@ -33,6 +34,9 @@ export async function POST(request: Request) {
       chunkOverlap: 200,
     });
 
+    const chunks = docs.map(d => d.pageContent);
+    const summary = await summarizeChunks(chunks);
+
     const previews = docs.map((d) => ({
       pageContentPreview: d.pageContent.slice(0, 1000),
       metadata: d.metadata,
@@ -41,7 +45,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       docsCount: docs.length,
-      docs
+      docs,
+      summary
 
     });
   } catch (err: any) {

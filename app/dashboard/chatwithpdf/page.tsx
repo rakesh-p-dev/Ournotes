@@ -19,19 +19,6 @@ export default function ChatWithPdfPage() {
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    
-    if (uploadedFiles && uploadedFiles.length > 0) {
-      setMessages([
-        {
-          id: "m-1",
-          role: "assistant",
-          text: "Hi — I've received your file. Ask questions about it or request summaries.",
-        },
-      ]);
-    }
-  }, [uploadedFiles]);
-
-  useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
@@ -75,7 +62,7 @@ export default function ChatWithPdfPage() {
                 setProcessing(true);
                 setProgressMessage("Uploading & extracting document...");
               }}
-              onExtract={async (docId, docs, file) => {
+              onExtract={async (docId, docs, file, summary) => {
                 try {
                   console.log("Parsed docs after embedding:", docs);
                   setUploadedFiles([file]);
@@ -83,7 +70,7 @@ export default function ChatWithPdfPage() {
                     {
                       id: "m-1",
                       role: "assistant",
-                      text: "Hi — I've received and ingested your file. Ask questions about it. This is a scaffold; connect to your LLM in /api/chat to get real answers.",
+                      text: `Hi — I've received and ingested your file. Here's a quick summary: ${summary}. Ask questions about it!`,
                     },
                   ]);
                 } catch (err) {

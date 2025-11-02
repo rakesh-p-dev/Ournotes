@@ -8,6 +8,8 @@ export async function POST(request: Request) {
 
     const reply = await runAgent(message);
 
+    console.log("Agent reply:", reply);
+
     return NextResponse.json({ reply });
 
 }
