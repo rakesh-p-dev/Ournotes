@@ -1,5 +1,4 @@
-// route.ts (or route.js / route.tsx) — keep filename according to Next app router rules
-export const runtime = "nodejs";
+
 
 import { NextResponse } from "next/server";
 import { parsePdfBufferToDocs } from "../../../../langchain/pdfloader";

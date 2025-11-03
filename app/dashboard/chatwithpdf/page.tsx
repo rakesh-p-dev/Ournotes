@@ -64,7 +64,6 @@ export default function ChatWithPdfPage() {
               }}
               onExtract={async (docId, docs, file, summary) => {
                 try {
-                  console.log("Parsed docs after embedding:", docs);
                   setUploadedFiles([file]);
                   setMessages([
                     {

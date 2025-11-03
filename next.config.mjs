@@ -9,7 +9,7 @@ const nextConfig = { images: {
     ],
   },
 experimental: {
-    serverComponentsExternalPackages: ["pdf-parse","@langchain/core/tools"],
+    serverComponentsExternalPackages: ["pdf-parse","@langchain/core/tools","tesseract.js"],
   },};
 
 export default nextConfig;

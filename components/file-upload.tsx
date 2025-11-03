@@ -4,6 +4,9 @@ import { motion } from "motion/react";
 import { IconUpload } from "@tabler/icons-react";
 import { useDropzone } from 'react-dropzone'
 
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+const PDF_MIME_TYPE = "application/pdf";
+
 const mainVariant = {
   initial: {
     x: 0,
@@ -42,18 +45,49 @@ export const FileUpload = ({
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (newFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onChange && onChange(newFiles);
-    if (newFiles && newFiles.length > 0) {
-      uploadAndExtract(newFiles[0]);
+  const resetSelection = () => {
+    setFiles([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
+  const validateFile = (file: File): string | null => {
+    const isPdf = file.type === PDF_MIME_TYPE || file.name.toLowerCase().endsWith(".pdf");
+    if (!isPdf) {
+      return "Only PDF files are allowed.";
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      return "File size must be 5 MB or less.";
+    }
+
+    return null;
+  };
+
+  const handleFileChange = (newFiles: File[]) => {
+    const file = newFiles?.[0];
+    if (!file) return;
+
+    const validationError = validateFile(file);
+    if (validationError) {
+      setErrorMessage(validationError);
+      setProgressMessage(null);
+      resetSelection();
+      return;
+    }
+
+    setErrorMessage(null);
+    setFiles([file]);
+    onChange && onChange([file]);
+    uploadAndExtract(file);
+  };
+
   async function uploadAndExtract(file: File) {
-   
+    setErrorMessage(null);
     onUploadStart && onUploadStart(file);
     setProgressMessage("Parsing & chunking...");
     onProgress && onProgress("Parsing & chunking...");
@@ -70,8 +104,8 @@ export const FileUpload = ({
       const response = await res.json();
       if (!response.ok) {
         console.error("parse-embed failed", response);
+        setErrorMessage("Failed to process the PDF. Please try again.");
       } else {
-        console.log("parse-embed success", response);
 
         const docId = response.docId ?? `${file.name}-${Date.now()}`;
         const docs = response.docs ?? [];
@@ -85,7 +119,6 @@ export const FileUpload = ({
 
       
         try {
-          console.log("upsert-chunks: sending", { docId, chunks: docs.map((d: any) => d.pageContent) });
           const upsertRes = await fetch("/api/ingest/upsertchunks", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -99,7 +132,6 @@ export const FileUpload = ({
             onProgress && onProgress("Upload failed");
             onUpsertComplete && onUpsertComplete(docId, upsertJson);
           } else {
-            console.log("upsert-chunks success", upsertJson);
             setProgressMessage("Done");
             onProgress && onProgress("Done");
             onUpsertComplete && onUpsertComplete(docId, upsertJson);
@@ -117,6 +149,7 @@ export const FileUpload = ({
       }
     } catch (err) {
       console.error("uploadAndIngest error", err);
+      setErrorMessage("Unexpected error during upload. Please try again.");
     }
   }
 
@@ -128,8 +161,16 @@ export const FileUpload = ({
     multiple: false,
     noClick: true,
     onDrop: handleFileChange,
-    onDropRejected: (error) => {
-      console.log(error);
+    maxSize: MAX_FILE_SIZE_BYTES,
+    accept: {
+      [PDF_MIME_TYPE]: [".pdf"],
+    },
+    onDropRejected: (fileRejections) => {
+      const firstError = fileRejections?.[0]?.errors?.[0];
+      const message = firstError?.message ?? "Only PDF files up to 5 MB are allowed.";
+      setErrorMessage(message);
+      setProgressMessage(null);
+      resetSelection();
     },
   });
 
@@ -144,6 +185,7 @@ export const FileUpload = ({
           ref={fileInputRef}
           id="file-upload-handle"
           type="file"
+          accept="application/pdf"
           onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
           className="hidden"
         />
@@ -158,6 +200,9 @@ export const FileUpload = ({
             Drag or drop your files here or click to upload
           </p>
           <div className="relative w-full mt-10 max-w-xl mx-auto">
+              {errorMessage && (
+                <p className="text-sm text-red-600 dark:text-red-400 text-center mb-4">{errorMessage}</p>
+              )}
             {files.length > 0 &&
               files.map((file, idx) => (
                 <motion.div

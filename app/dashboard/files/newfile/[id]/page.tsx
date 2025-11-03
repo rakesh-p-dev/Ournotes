@@ -22,7 +22,6 @@ const handleSubmit = async (e: React.FormEvent) => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('subjectid', subjectid);
-        console.log(subjectid);
         formData.append('userid', userid || '');
         const uploadtoast=toast.loading('Uploading the file...')
         try{

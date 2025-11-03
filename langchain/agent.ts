@@ -3,40 +3,34 @@ import { PineconeStore } from "@langchain/pinecone";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, SystemMessage } from "langchain";
 
-import { embeddings } from "./ingest"; // your embeddings instance
+import { embeddings } from "./ingest"; 
 
-// Helper function to strip markdown formatting
 function stripMarkdown(text: string): string {
   return text
-    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove **bold**
-    .replace(/\*(.*?)\*/g, '$1')     // Remove *italic*
-    .replace(/__(.*?)__/g, '$1')     // Remove __underline__
-    .replace(/_(.*?)_/g, '$1')       // Remove _italic_
-    .replace(/`(.*?)`/g, '$1')       // Remove `code`
-    .replace(/```[\s\S]*?```/g, '')  // Remove code blocks
-    .replace(/^\s*[-*+]\s+/gm, '')   // Remove list markers
-    .replace(/^\s*\d+\.\s+/gm, '')   // Remove numbered list markers
-    .replace(/\n\s*\n/g, '\n')       // Remove extra newlines
+    .replace(/\*\*(.*?)\*\*/g, '$1') 
+    .replace(/\*(.*?)\*/g, '$1')    
+    .replace(/__(.*?)__/g, '$1')     
+    .replace(/_(.*?)_/g, '$1')       
+    .replace(/`(.*?)`/g, '$1')       
+    .replace(/```[\s\S]*?```/g, '')  
+    .replace(/^\s*[-*+]\s+/gm, '')   
+    .replace(/^\s*\d+\.\s+/gm, '')   
+    .replace(/\n\s*\n/g, '\n')       
     .trim();
 }
 
-// Pinecone / vector store (same as before)
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY ?? "" });
 const pineconeIndex = pinecone.index("ournotes");
 const vectorStore = new PineconeStore(embeddings, { pineconeIndex });
 
-// Gemini chat model
 const model = new ChatGoogleGenerativeAI({
   model: "gemini-2.5-flash",
   apiKey: process.env.GEMINI_API_KEY ?? "",
 });
 
-/**
- * Retrieve top-k documents for query (same shape you used earlier).
- * Returns serialized string and raw docs.
- */
+
 export async function retrieve({ query }: { query: string }) {
-  const retrievedDocs = await (vectorStore as any).similaritySearch(query, 3); // top-3
+  const retrievedDocs = await (vectorStore as any).similaritySearch(query, 3); 
   const serialized = retrievedDocs
     .map(
       (doc: any, i: number) =>
@@ -65,14 +59,12 @@ export async function runAgent(userMessage: string) {
         ? contextSerialized.slice(0, MAX_CONTEXT_CHARS) + "\n\n[TRUNCATED]"
         : contextSerialized;
 
-        console.log("Context for RAG prompt:", contextForPrompt);
 
     const userPromptText = `Context:\n${contextForPrompt}\n\nUser question:\n${userMessage}\n\nAnswer concisely and cite Source lines where appropriate (e.g., "Source: <docId>").`;
 
     const userMsg = new HumanMessage(userPromptText);
 
     const res = await (model as any).invoke([systemPrompt, userMsg]);
-    console.log(res);
 
     const reply = res?.content ?? (res as any)?.text ?? JSON.stringify(res);
     return stripMarkdown(reply);

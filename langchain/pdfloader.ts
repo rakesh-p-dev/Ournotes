@@ -28,7 +28,6 @@ export async function parsePdfBufferToDocs(
     },
   ];
 
-  console.log("docs while parsing "+ data)
 
   const chunkSize = opts?.chunkSize ?? 1000;
   const chunkOverlap = opts?.chunkOverlap ?? 200;
