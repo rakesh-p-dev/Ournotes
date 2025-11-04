@@ -5,7 +5,7 @@ import { HumanMessage, SystemMessage } from "langchain";
 
 import { embeddings } from "./ingest"; 
 
-function stripMarkdown(text: string): string {
+export function stripMarkdown(text: string): string {
   return text
     .replace(/\*\*(.*?)\*\*/g, '$1') 
     .replace(/\*(.*?)\*/g, '$1')    

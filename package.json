@@ -47,7 +47,7 @@
     "next-view-transitions": "^0.3.4",
     "node-redis": "^0.1.7",
     "nookies": "^2.5.2",
-  "pdf-parse": "1.1.1",
+    "pdf-parse": "^1.1.4",
     "pdfjs-dist": "^5.4.394",
     "prisma": "^5.16.2",
     "radix-ui": "^1.4.3",

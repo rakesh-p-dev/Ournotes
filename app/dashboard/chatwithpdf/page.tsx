@@ -26,6 +26,8 @@ export default function ChatWithPdfPage() {
     if (!input.trim()) return;
     const userMsg: Message = { id: `u-${Date.now()}`, role: "user", text: input };
     setMessages((m) => [...m, userMsg]);
+    const loadingMsg: Message = { id: "loading", role: "assistant", text: "Thinking..." };
+    setMessages((m) => [...m, loadingMsg]);
     setInput("");
     setLoading(true);
 
@@ -42,9 +44,10 @@ export default function ChatWithPdfPage() {
 
       const data = await res.json();
       const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: data.reply };
-      setMessages((m) => [...m, assistantMsg]);
+      setMessages((m) => m.map(msg => msg.id === "loading" ? assistantMsg : msg));
     } catch (err) {
-      setMessages((m) => [...m, { id: `a-err-${Date.now()}`, role: "assistant", text: "Sorry, something went wrong." }]);
+      const errorMsg: Message = { id: `a-err-${Date.now()}`, role: "assistant", text: "Sorry, something went wrong." };
+      setMessages((m) => m.map(msg => msg.id === "loading" ? errorMsg : msg));
     } finally {
       setLoading(false);
     }

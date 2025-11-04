@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { runAgent } from '../../../langchain/agent';
-
+import { runAgent } from '@/langchain/agentmock';
 export async function POST(request: Request) {
 
     const body = await request.json();
