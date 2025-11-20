@@ -4,14 +4,12 @@ import { setCookie } from './setcookie';
 
 const prisma = new PrismaClient();
 
-// Validate required environment variables
 const requiredEnvVars = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
 };
 
-// Check for missing environment variables
 const missingVars = Object.entries(requiredEnvVars)
   .filter(([_, value]) => !value)
   .map(([key]) => key);
@@ -41,6 +39,29 @@ export const authentication = {
       }
       return token;
     },
+    async signIn({ user, account }: any) {
+      if (!user?.email) return false;
+
+      try {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email }
+        });
+
+        if (!existingUser) {
+          await prisma.user.create({
+            data: {
+              name: user.name,
+              email: user.email,
+            }
+          });
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Error in signIn callback:', error);
+        return false;
+      }
+    },
     session: async ({ session, token }: any) => {
       if (session.user) {
         session.user.id = token.uid;
@@ -58,24 +79,15 @@ export const authentication = {
           if (typeof window !== 'undefined') {
             localStorage.setItem('userId', existingUser.id.toString());
           }
-        } else {
-          const newUser = await prisma.user.create({
-            data: {
-              name: session.user.name,
-              email: session.user.email,
-            }
-          });
-
-          await setCookie('userId', newUser.id.toString());
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('userId', newUser.id.toString());
-          }
         }
       } catch (error) {
         console.error('Error in session callback:', error);
       }
 
       return session;
+    },
+    async redirect() {
+      return '/dashboard/explore';
     },
   }
 };

@@ -44,7 +44,6 @@ export default function Profile() {
   <DropdownMenuTrigger asChild>
     <button 
       className="rounded-full cursor-pointer"
-      onClick={() => console.log("DropdownMenuTrigger clicked!")}
     >
       <Avatar
         className={`transition-all duration-200 ${
