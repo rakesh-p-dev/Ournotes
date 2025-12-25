@@ -86,7 +86,11 @@ export const authentication = {
 
       return session;
     },
-    async redirect() {
+    async redirect({ url, baseUrl }: any) {
+      if (typeof url === 'string') {
+        if (url.startsWith('/')) return url;
+        if (url.startsWith(baseUrl)) return url;
+      }
       return '/dashboard/explore';
     },
   }
